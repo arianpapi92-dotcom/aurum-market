@@ -1,0 +1,103 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0f19">
+  <title>AURUM Market — بازار زنده طلا و سکه</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="{% static 'market/style.css' %}">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#" aria-label="AURUM">
+          <span class="brand-mark"><span>Au</span></span>
+          <span class="brand-copy"><b>AURUM</b><small>MARKET INTELLIGENCE</small></span>
+        </a>
+        <nav class="nav-links" aria-label="منوی اصلی">
+          <a class="active" href="#overview">نمای بازار</a><a href="#chartSection">نمودار</a><a href="#historySection">تاریخچه</a>
+        </nav>
+        <div class="top-actions">
+          <div class="status-pill"><i></i><span>بازار زنده</span><b id="clock">--:--:--</b></div>
+          <button class="icon-btn" id="themeToggle" title="تغییر پوسته" aria-label="تغییر پوسته">
+            <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.5-.04-1-.12-1.48A7 7 0 0 1 13.48 3.1C13 3.04 12.5 3 12 3Z"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="overview">
+        <div class="hero-copy">
+          <div class="eyebrow"><span></span> پایش هوشمند بازار ایران</div>
+          <h1>نبض بازار،<br><em>شفاف و زنده.</em></h1>
+          <p>قیمت طلا و سکه را با ثبت خودکار یک‌دقیقه‌ای، نمودار تعاملی و تاریخچه‌ی دقیق در یک داشبورد حرفه‌ای دنبال کن.</p>
+          <div class="hero-meta">
+            <div><small>بروزرسانی</small><strong>هر ۶۰ ثانیه</strong></div>
+            <div><small>دارایی‌های فعال</small><strong>۵ بازار</strong></div>
+            <div><small>وضعیت سرویس</small><strong class="online">● آنلاین</strong></div>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="coin-ring ring-a"></div><div class="coin-ring ring-b"></div>
+          <div class="gold-disc"><span>Au</span><small>79</small></div>
+          <div class="mini-card mc1"><span>LIVE</span><b>+1.24%</b></div>
+          <div class="mini-card mc2"><span>UPDATE</span><b>60s</b></div>
+        </div>
+      </section>
+
+      <section class="market-strip">
+        <div class="strip-label"><i></i> بازار لحظه‌ای</div>
+        <div id="ticker" class="ticker"></div>
+        <div class="strip-time">آخرین دریافت <b id="lastFetch">—</b></div>
+      </section>
+
+      <section id="cards" class="cards" aria-live="polite"></section>
+
+      <section class="dashboard-grid" id="chartSection">
+        <article class="surface chart-card">
+          <div class="section-head">
+            <div><span class="overline">PRICE ACTION</span><h2>روند قیمت</h2><p id="chartSubtitle">تحلیل حرکت قیمت در رکوردهای ذخیره‌شده</p></div>
+            <div class="controls">
+              <div class="segmented" id="marketTabs"></div>
+              <select id="range" aria-label="بازه نمودار"><option value="60">۶۰ دقیقه</option><option value="180">۳ ساعت</option><option value="720">۱۲ ساعت</option><option value="1440">۲۴ ساعت</option><option value="0">همه</option></select>
+            </div>
+          </div>
+          <div class="chart-kpis">
+            <div><small>قیمت فعلی</small><b id="currentPrice">—</b><span>تومان</span></div>
+            <div><small>تغییر بازه</small><b id="periodChange">—</b></div>
+            <div><small>بیشترین</small><b id="periodHigh">—</b></div>
+            <div><small>کمترین</small><b id="periodLow">—</b></div>
+          </div>
+          <div class="chart-wrap"><canvas id="chart"></canvas><div id="chartEmpty" class="empty-state"><div class="loader"></div><b>در انتظار داده بازار</b><span>Collector را اجرا کن تا نمودار ساخته شود.</span></div></div>
+        </article>
+
+        <aside class="surface pulse-card">
+          <div class="section-head compact"><div><span class="overline">MARKET PULSE</span><h2>نمای لحظه‌ای</h2></div><span class="live-dot">LIVE</span></div>
+          <div id="snapshot" class="snapshot"></div>
+          <div class="pulse-footer"><span>منبع داده</span><b>TGJU</b><small>ثبت محلی توسط Django</small></div>
+        </aside>
+      </section>
+
+      <section class="surface history-card" id="historySection">
+        <div class="section-head">
+          <div><span class="overline">RECENT TICKS</span><h2>آخرین ثبت‌های بازار</h2><p>جدیدترین داده‌های ذخیره‌شده در CSV</p></div>
+          <button id="refresh" class="refresh-btn"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66L20 8.68M20 4v4.68h-4.68"/></svg><span>بروزرسانی</span></button>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>زمان ثبت</th><th>طلای ۱۸</th><th>طلای ۲۴</th><th>سکه امامی</th><th>نیم سکه</th><th>ربع سکه</th></tr></thead><tbody id="tbody"></tbody></table></div>
+      </section>
+
+      <footer><div class="brand-mini"><span>Au</span><b>AURUM MARKET</b></div><p>داشبورد شخصی تحلیل بازار · داده‌ها صرفاً جهت نمایش و تحلیل هستند.</p><div id="updated">در انتظار اولین داده…</div></footer>
+    </main>
+  </div>
+  <div id="toast" class="toast">داده‌ها بروزرسانی شدند</div>
+  <script src="{% static 'market/app.js' %}"></script>
+</body>
+</html>
